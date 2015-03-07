@@ -21,9 +21,8 @@ const int chipSelect = 4;
 const int maxTrialNum = 250;
 const int delayConstant = 100000;  //Time to wait until data is collected, should change to a timer
 
-String filename;  //Global filename 
-
-short currentTrial;
+String filename;     //Global filename
+short currentTrial;  //Value grabbed from EEPROM, determines the filename
 
 void setup()
 {
@@ -41,7 +40,7 @@ void setup()
     #ifdef DEBUG
       Serial.println("[### Card Init Failed! ###]");
     #endif
-    while(1){
+    while(1){  //Supposed to signal user, but the Ethernet shield doesn't have an LED
       digitalWrite(ledPin, HIGH);
       delay(150);
       digitalWrite(ledPin, LOW);
