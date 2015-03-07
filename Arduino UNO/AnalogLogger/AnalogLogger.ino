@@ -14,8 +14,12 @@
 #include <Wire.h>
 
 #define DEBUG
+//#define ULTRA_DEBUG
+#define VERBOSE_PACKET
 #define RTC_ENABLE  //Comment out if not using an RTC
 #define DS1307_I2C_ADDRESS 0x68
+
+#define NOP //Hai
 
 const int ledPin = 13;
 const int trialResetPin = 9;
@@ -23,9 +27,12 @@ const int trialNumAddr = 0;
 const int chipSelect = 4;
 const int maxTrialNum = 250;
 const int delayConstant = 100000;  //Time to wait until data is collected, should change to a timer
+const long microSecondsPerReading = 60000;//100000;  //This number should stay above ~60000
 
 String filename;     //Global filename
 short currentTrial;  //Value grabbed from EEPROM, determines the filename
+
+long initTime;
 
 void setup()
 {
@@ -95,6 +102,9 @@ void setup()
     Wire.begin();
   #endif
   
+  //Setup start time
+  initTime = micros();
+  
   #ifdef DEBUG
     Serial.println("[End Arduino Init]");
     Serial.print("[Current Trial: ");
@@ -112,10 +122,11 @@ currentTrial, time (if RTC is enabled), A0, A1, A2
 */
 void loop()
 {
-  delayMicroseconds(delayConstant);
+  //delayMicroseconds(delayConstant);
   
   String dataString = "";
   
+  static long prevMeasure = initTime;
   static int iter = 0;  //Unused variable?
   
   dataString += String(currentTrial);
@@ -123,6 +134,10 @@ void loop()
   
   #ifdef RTC_ENABLE
   //Add current time to log
+
+    static int iterPerSecondCounter = 0;
+    static byte prevSecond = 70;
+  
     byte second, minute, hour, dayOfWeek, dayOfMonth, month, year;
     
     getDateDs1307(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month, &year);
@@ -140,6 +155,28 @@ void loop()
     dataString += String(second);
     dataString += ",";
   
+    if( second != prevSecond ){  //If the second has changed
+      prevSecond = second;       //Set the new second
+      iterPerSecondCounter = 0;  //Reset the counter
+    }
+    else {                       //Otherwise, we need to continue counting
+      ++iterPerSecondCounter;
+    }
+    
+    /* THE FOLLLOWING SECTION NEEDS WORK */
+    //Add the counter to the stream
+    //if(iterPerSecondCounter < 10)
+    //  dataString += "0";
+    //dataString += String( micros() -  );
+    //dataString += String((int)(((float)iterPerSecondCounter*(float)microSecondsPerReading)/ 1000.0));  //We want to determine number of ms [THIS NUMBER IS INACCURATE]
+    //dataString += ",";
+    
+    /*
+    dataString += micros();
+    dataString += ",";
+    dataString += micros() - prevMeasure;
+    dataString += ",";
+    */
   #endif
   
   //Read three ADCs
@@ -170,6 +207,21 @@ void loop()
       Serial.println("error opening datalog.txt");
     #endif
   }
+  
+  #ifdef ULTRA_DEBUG
+    Serial.print("Cycle took: ");
+    Serial.println((micros() - prevMeasure));
+  #endif 
+  
+  //Wait until the timing is sufficiently okie dokie
+  //Note, after about 70 minutes of running, the micros() will overflow, but this is 
+  //okay, because then you get 0 - large number, which is negative, which will just 
+  //result in a quick data point, not the end of the world.
+  while ( (micros() - prevMeasure) < microSecondsPerReading) {
+    //Serial.println((micros() - prevMeasure));
+    NOP
+  }
+  prevMeasure = micros() - 1; //-1 to ensure we won't run into any problems
 }
 
 
