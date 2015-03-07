@@ -31,13 +31,13 @@ void setup()
     Serial.begin(9600);
     Serial.println("[Arduino Init]");
     Serial.println("[SD Card Init]");
-  #endif 
-  pinMode(10, OUTPUT);
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
+  #endif   
+  pinMode(10, OUTPUT);        //Required for the Ethernet Shield's SD Card Reader
+  pinMode(ledPin, OUTPUT);    //Indication
+  digitalWrite(ledPin, LOW);  //LED default to off
 
   //Init card 
-  if (!SD.begin(chipSelect)) {
+  if (!SD.begin(chipSelect)) {  //!!!TODO / Need some way of alerting user that the card failed to read
     #ifdef DEBUG
       Serial.println("[### Card Init Failed! ###]");
     #endif
@@ -114,7 +114,7 @@ void loop()
   dataString += String(currentTrial);
   dataString += ",";
   
-  // read three sensors and append to the string:
+  //Read three ADCs
   for (int analogPin = 0; analogPin < 3; analogPin++) {
     int data = analogRead(analogPin);
     dataString += String(data);
@@ -128,18 +128,16 @@ void loop()
   dataString += "potato";
   */
   
-  File dataFile = SD.open(filename.c_str(), FILE_WRITE);
-
-  // if the file is available, write to it:
-  if (dataFile) {
+  File dataFile = SD.open(filename.c_str(), FILE_WRITE); //File object
+   
+  if (dataFile) { //If the file is available, output
     dataFile.println(dataString);
     dataFile.close();
     #ifdef DEBUG
       Serial.println(dataString); //Debug to the serial port
     #endif
   }
-  // if the file isn't open, pop up an error:
-  else {
+  else {  //Error state
     #ifdef DEBUG
       Serial.println("error opening datalog.txt");
     #endif
