@@ -11,8 +11,11 @@
 #include <SPI.h>
 #include <SD.h>
 #include <EEPROM.h>
+#include <Wire.h>
 
 #define DEBUG
+#define RTC_ENABLE  //Comment out if not using an RTC
+#define DS1307_I2C_ADDRESS 0x68
 
 const int ledPin = 13;
 const int trialResetPin = 9;
@@ -87,6 +90,11 @@ void setup()
     dataFile.println("Format: Trial Number, A0, A1, A2");
   }
   
+  //Init Wire
+  #ifdef RTC_ENABLE
+    Wire.begin();
+  #endif
+  
   #ifdef DEBUG
     Serial.println("[End Arduino Init]");
     Serial.print("[Current Trial: ");
@@ -99,7 +107,7 @@ void setup()
 /*
 
 Final output string:
-currentTrial, A0, A1, A2
+currentTrial, time (if RTC is enabled), A0, A1, A2
 
 */
 void loop()
@@ -112,6 +120,27 @@ void loop()
   
   dataString += String(currentTrial);
   dataString += ",";
+  
+  #ifdef RTC_ENABLE
+  //Add current time to log
+    byte second, minute, hour, dayOfWeek, dayOfMonth, month, year;
+    
+    getDateDs1307(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month, &year);
+    
+    if(hour < 10)
+      dataString += "0";
+    dataString += String(hour);
+    dataString += ":";
+    if(minute < 10)
+      dataString += "0";
+    dataString += String(minute);
+    dataString += ":";
+    if(second < 10)
+      dataString += "0";
+    dataString += String(second);
+    dataString += ",";
+  
+  #endif
   
   //Read three ADCs
   for (int analogPin = 0; analogPin < 3; analogPin++) {
@@ -142,3 +171,46 @@ void loop()
     #endif
   }
 }
+
+
+
+/* BEGIN RTC Helper Functions */
+#ifdef RTC_ENABLE
+
+// Convert normal decimal numbers to binary coded decimal
+byte decToBcd(byte val)
+{
+  return ( (val/10*16) + (val%10) );
+}
+// Convert binary coded decimal to normal decimal numbers
+byte bcdToDec(byte val)
+{
+  return ( (val/16*10) + (val%16) );
+}
+
+// Gets the date and time from the ds1307
+void getDateDs1307(byte *second,
+  byte *minute,
+  byte *hour,
+  byte *dayOfWeek,
+  byte *dayOfMonth,
+  byte *month,
+  byte *year)
+{
+// Reset the register pointer
+  Wire.beginTransmission(DS1307_I2C_ADDRESS);
+  Wire.write(0);
+  Wire.endTransmission();
+  Wire.requestFrom(DS1307_I2C_ADDRESS, 7);
+  // A few of these need masks because certain bits are control bits
+  *second = bcdToDec(Wire.read() & 0x7f);
+  *minute = bcdToDec(Wire.read());
+  *hour = bcdToDec(Wire.read() & 0x3f); // Need to change this if 12 hour am/pm
+  *dayOfWeek = bcdToDec(Wire.read());
+  *dayOfMonth = bcdToDec(Wire.read());
+  *month = bcdToDec(Wire.read());
+  *year = bcdToDec(Wire.read());
+}
+
+#endif
+/* END RTC Helper Functions */
