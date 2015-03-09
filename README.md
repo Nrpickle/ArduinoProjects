@@ -7,13 +7,9 @@ These projects come with no provided support or warranty, but I'd be happy to an
 
 ## AnalogLogger <a target="_blank" href="https://github.com/Nrpickle/ArduinoProjects/tree/master/Arduino%20UNO/AnalogLogger">[link]</a>
 
-<div>
-
-<img src="http://nrpickle.net/static/files/img/AnalogLogger.jpg" alt="AnalogLogger" width=250" style="float:left;">
-
 Originally designed for <a target="_blank" href="http://groups.engr.oregonstate.edu/osurc/">OSURC</a>, this program logs ADC data to an SD Card. It uses EEPROM to inteligently name files to allow for extended and individual tests. Optional RTC support.
 
-</div>
+<img src="http://nrpickle.net/static/files/img/AnalogLogger.jpg" alt="AnalogLogger" width=200" style="float:left;">
 
 #### Hardware Requirements
  * Arduino UNO
