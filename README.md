@@ -9,9 +9,9 @@ These projects come with no provided support or warranty, but I'd be happy to an
 
 <div>
 
-Originally designed for <a target="_blank" href="http://groups.engr.oregonstate.edu/osurc/">OSURC</a>, this program logs ADC data to an SD Card. It uses EEPROM to inteligently name files to allow for extended and individual tests. Optional RTC support.
-
 <img src="http://nrpickle.net/static/files/img/AnalogLogger.jpg" alt="AnalogLogger" width=250" style="float:left;">
+
+Originally designed for <a target="_blank" href="http://groups.engr.oregonstate.edu/osurc/">OSURC</a>, this program logs ADC data to an SD Card. It uses EEPROM to inteligently name files to allow for extended and individual tests. Optional RTC support.
 
 </div>
 
