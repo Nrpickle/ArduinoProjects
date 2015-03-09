@@ -5,7 +5,7 @@
  March 2015
  
  @desc 
- This program records all of the analog ports onto an SD Card. It _requires_ no hardware to run besides the Ethernet Shield, but you can also add a SF RTC on the I2C bus to enable RTC logging.
+ This program records all of the analog ports onto an SD Card. It _requires_ no hardware to run besides the Ethernet Shield, but you can also add a SF RTC on the I2C bus to enable RTC logging (Make sure to enable/disable the "RTC_ENABLE").
  */
 
 #include <SPI.h>
@@ -27,12 +27,13 @@ const int trialNumAddr = 0;
 const int chipSelect = 4;
 const int maxTrialNum = 250;
 const int delayConstant = 100000;  //Time to wait until data is collected, should change to a timer
-const long microSecondsPerReading = 60000;//100000;  //This number should stay above ~60000
+const long microSecondsPerReading = 60000; //100000;  //This number should stay above ~60000
 
 String filename;     //Global filename
 short currentTrial;  //Value grabbed from EEPROM, determines the filename
-
-long initTime;
+//long microsInit;     //Contains initial micros() value, to help determine timing later
+long milliInitTime;  //Contains initial millis() value
+long initTime;       //Contains initial micros() value, to help determine timing later
 
 void setup()
 {
@@ -104,6 +105,7 @@ void setup()
   
   //Setup start time
   initTime = micros();
+  milliInitTime = millis();
   
   #ifdef DEBUG
     Serial.println("[End Arduino Init]");
@@ -112,12 +114,14 @@ void setup()
     Serial.println("]");
   #endif
   
+  //TODO: Add wait until second is 0
+  
 }
 
 /*
 
 Final output string:
-currentTrial, time (if RTC is enabled), A0, A1, A2
+currentTrial, time (if RTC is enabled), Millisecond (if RTC is enabled) A0, A1, A2
 
 */
 void loop()
@@ -162,6 +166,13 @@ void loop()
     else {                       //Otherwise, we need to continue counting
       ++iterPerSecondCounter;
     }
+    
+    //TODO: Test & comment
+    
+    int milliSeconds = (millis() - milliInitTime) % 1000;
+    
+    dataString += String(milliSeconds);
+    dataString += ",";
     
     /* THE FOLLLOWING SECTION NEEDS WORK */
     //Add the counter to the stream
