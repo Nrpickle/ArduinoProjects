@@ -45,11 +45,11 @@ void setup()
   Serial.begin(9600);
   
   //For reprogramming only
-  second = 0;
-  minute = 55;
-  hour = 23;
-  dayOfWeek = 6;
-  dayOfMonth = 6;
+  second = 25;
+  minute = 49;
+  hour = 11;
+  dayOfWeek = 2;
+  dayOfMonth = 9;
   month = 3;
   year = 15;
   
