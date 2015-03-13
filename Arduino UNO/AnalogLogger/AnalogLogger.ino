@@ -98,7 +98,7 @@ void setup()
     dataFile.println("Format: Trial Number, time (if RTC is enabled), Milliseconds (if RTC is enabled), Running seconds (if RTC is enabled), A0, A1, A2");
     dataFile.print("Current Settings: ");
     dataFile.print("Milliseconds per reading: ");
-    dataFile.print(microSecondsPerReading / 1000);
+    dataFile.println(microSecondsPerReading / 1000);
   }
   
   dataFile.close();
