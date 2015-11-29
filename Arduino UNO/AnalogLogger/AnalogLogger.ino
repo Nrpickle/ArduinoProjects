@@ -8,6 +8,8 @@
  This program records all of the analog ports onto an SD Card. It _requires_ no hardware to run besides the Ethernet Shield, but you can also add a SF RTC on the I2C bus to enable RTC logging (Make sure to enable/disable the "RTC_ENABLE"). Adafruit's RTC has been used as well. Basically if it is an DS1307 with the I2C address 0x68, then it will work.
  
  Also, ensure that you have properly configured the time/date of your RTC, this script does not do that for you.
+ 
+ If you want the data that is being logged, uncomment "#define DEBUG"
  */
 
 #include <SPI.h>
