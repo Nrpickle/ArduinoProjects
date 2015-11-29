@@ -9,7 +9,9 @@
  
  Also, ensure that you have properly configured the time/date of your RTC, this script does not do that for you.
  
- If you want the data that is being logged, uncomment "#define DEBUG"
+ If you want the data that is being logged in real time, uncomment "#define DEBUG" and it will be outputted over Serial.
+ 
+ If you uncomment "//#define ULTRA_DEBUG", then you can see how long a single "measurement" takes. Keep in mind, this is with a ton of serial outputting.
  */
 
 #include <SPI.h>
@@ -22,7 +24,7 @@
 #define VERBOSE_PACKET
 #define RTC_ENABLE  //Comment out if not using an RTC
 #define DS1307_I2C_ADDRESS 0x68
-#define NUMBER_OF_ADC_PINS_TO_LOG 3
+#define NUMBER_OF_ADC_PINS_TO_LOG 3 //The program logs the number of pins stated here (index 0)
 
 #define NOP //Hai
 
@@ -231,11 +233,6 @@ void loop()
     }
   }
 
-  /*
-  dataString += ",";
-  dataString += "potato";
-  */
-  
   File dataFile = SD.open(filename.c_str(), FILE_WRITE); //File object
    
   if (dataFile) { //If the file is available, output
