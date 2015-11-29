@@ -15,6 +15,7 @@
  
  TODO:
  - Implement ULTRA_DEBUG counter to deduct out time taken outputting text over Serial (probably non-trivial)
+ - Add altert to user that Init failed (LED 13 solid until init completes?)
 
  */
 
