@@ -22,6 +22,7 @@
 #define VERBOSE_PACKET
 #define RTC_ENABLE  //Comment out if not using an RTC
 #define DS1307_I2C_ADDRESS 0x68
+#define NUMBER_OF_ADC_PINS_TO_LOG 3
 
 #define NOP //Hai
 
@@ -222,10 +223,10 @@ void loop()
   #endif
   
   //Read three ADCs
-  for (int analogPin = 0; analogPin < 3; analogPin++) {
+  for (int analogPin = 0; analogPin < NUMBER_OF_ADC_PINS_TO_LOG; analogPin++) {
     int data = analogRead(analogPin);
     dataString += String(data);
-    if (analogPin < 2) {
+    if (analogPin < NUMBER_OF_ADC_PINS_TO_LOG - 1) {
       dataString += ",";
     }
   }
