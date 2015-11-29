@@ -12,6 +12,10 @@
  If you want the data that is being logged in real time, uncomment "#define DEBUG" and it will be outputted over Serial.
  
  If you uncomment "//#define ULTRA_DEBUG", then you can see how long a single "measurement" takes. Keep in mind, this is with a ton of serial outputting.
+ 
+ TODO:
+ - Implement ULTRA_DEBUG counter to deduct out time taken outputting text over Serial (probably non-trivial)
+
  */
 
 #include <SPI.h>
